@@ -2,6 +2,7 @@
 
 const btnScrollTo = document.querySelector('.btn--scroll-to');
 const section1 = document.querySelector('#section--1');
+const h1 = document.querySelector('h1');
 
 const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
@@ -37,21 +38,7 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
-// Event Delegation: Implementing Page Navigation
-
-// Not good for performance at scale
-// const navLinks = document.querySelectorAll('.nav__link');
-// navLinks.forEach(link => {
-//   link.addEventListener('click', function (e) {
-//     e.preventDefault();
-//     const id = this.getAttribute('href');
-//     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
-//   });
-// });
-
-// Better way of doing page navigation
-// 1. Add event listener to common parent element
-// 2. Determine what element originated the event
+// Event Delegation for Page Navigation
 document.querySelector('.nav__links').addEventListener('click', function (e) {
   e.preventDefault();
 
@@ -63,81 +50,25 @@ document.querySelector('.nav__links').addEventListener('click', function (e) {
 });
 
 // Implementing Smooth Scrolling
-btnScrollTo.addEventListener('click', e => {
-  const s1coords = section1.getBoundingClientRect();
-  console.log(s1coords);
-
-  console.log(e.target.getBoundingClientRect());
-
-  console.log('Current scroll(X/Y)', window.pageXOffset, window.pageYOffset);
-
-  console.log(
-    'height/width viewport',
-    document.documentElement.clientHeight,
-    document.documentElement.clientWidth
-  );
-
-  // Scrolling
-  // window.scrollTo(
-  //   s1coords.left + window.pageXOffset,
-  //   s1coords.top + window.pageYOffset
-  // ); // only relative to the viewport, not document
-
-  // OG way
-  // window.scrollTo({
-  //   left: s1coords.left + window.pageXOffset,
-  //   top: s1coords.top + window.pageYOffset,
-  //   behavior: 'smooth',
-  // });
-
-  // Modern way
+btnScrollTo.addEventListener('click', () => {
+  // const s1coords = section1.getBoundingClientRect();
   section1.scrollIntoView({ behavior: 'smooth' });
 });
 
-const h1 = document.querySelector('h1');
-
-// Allows multiple event listener functions
-const alertH1 = () => {
-  alert('addEventListener: Great! You are reading the heading :D');
-
-  // h1.removeEventListener('mouseenter', alertH1); // doesn't need to be in this function
-};
-
-h1.addEventListener('mouseenter', alertH1);
-
-setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000);
-
-// LECTURES
-
-// Selecting Elements
-console.log(document.documentElement); // the actual whole document
-console.log(document.head);
-console.log(document.body);
-
 const header = document.querySelector('.header');
 const allSections = document.querySelectorAll('.section');
-console.log(allSections); // returns NodeList
 
 document.getElementById('section--1');
 const allButtons = document.getElementsByTagName('button');
-console.log(allButtons);
-
-console.log(document.getElementsByClassName('btn'));
 
 // Creating Elements
-// .insertAdjacentHTML() -> refer back to Bankist App
-
-const message = document.createElement('div'); // not yet in the DOM
+const message = document.createElement('div');
 message.classList.add('cookie-message');
-// message.textContent = 'We use cookies for improved functionality and analytics.';
-message.innerHTML = `<button class="btn btn--close-cookie">Got it!</button>`;
-
-// header.prepend(message); // inserts into DOM as FIRST child of header element
-header.append(message); // now last child of header, but moved existing element instead of inserting
-// header.append(message.cloneNode(true)); // true means all child elements will be copied
-
-// header.before(message); // now truly before the header element
-// header.after(message); // now truly after
+message.innerHTML = `
+  We use cookies for improved functionality and analytics.
+  <button class="btn btn--close-cookie">Got it!</button>
+`;
+header.append(message);
 
 // Deleting Elements
 document
@@ -147,124 +78,18 @@ document
 // Styles
 message.style.backgroundColor = '#37383d';
 message.style.width = '105%';
-console.log(message.style.color); // doesn't appear
-console.log(message.style.backgroundColor); // appears
-
-// console.log(getComputedStyle(message));
-console.log(getComputedStyle(message).color);
-console.log(getComputedStyle(message).height);
 
 message.style.height =
   Number.parseFloat(getComputedStyle(message).height, 10) + 30 + 'px';
 
-// Set global property of document (:root in style.css)
-// document.documentElement.style.setProperty('--color-primary', 'orangered');
-
 // Attributes
 const logo = document.querySelector('.nav__logo');
-console.log(logo.alt);
-console.log(logo.src);
-console.log(logo.className);
-
 logo.alt = 'Beautiful minimalist logo';
 
 // Non-standard
-console.log(logo.designer); // undefined
-console.log(logo.getAttribute('designer')); // jonas
 logo.setAttribute('company', 'Bankist');
 
-console.log(logo.src); // full path
-console.log(logo.getAttribute('src')); // relative path (relative to index.html)
-
 const link = document.querySelector('.nav__link--btn');
-console.log(link.href);
-console.log(link.getAttribute('href'));
-
-// Data Attributes
-// must start with 'data'
-console.log(logo.dataset.versionNumber);
-
-// Classes
-logo.classList.add('c', 'j');
-logo.classList.remove('c', 'j');
-logo.classList.toggle('c');
-logo.classList.contains('c'); // not includes() like for arrays
-
-// DON'T USE THIS! -- overrides existing classes and allow only one class
-// logo.className = 'jonas';
-
-// OG way -- can only have one event listener function
-// h1.onmouseenter = () => {
-//   alert('addEventListener: Great! You are reading the heading :D');
-// }
-
-// Event Propagation in Practice
-
-const randomInt = (min, max) =>
-  Math.floor(Math.random() * (max - min + 1) + min);
-const randomColor = () =>
-  `rgb(${randomInt(0, 255)},${randomInt(0, 255)},${randomInt(0, 255)})`;
-
-document.querySelector('.nav__link').addEventListener('click', function (e) {
-  // this.style.backgroundColor = randomColor();
-  // console.log(e.target);
-  // console.log(e.currentTarget); // same as `this` keyword
-  // console.log(e.currentTarget === this); // true
-  // Stop propagation
-  // e.stopPropagation(); // never arrives at the next elements (the parents)
-});
-
-document.querySelector('.nav__links').addEventListener('click', function (e) {
-  // this.style.backgroundColor = randomColor();
-  // console.log(e.target); // same target as nav__link and nav__links due to BUBBLING
-  // console.log(e.currentTarget); // gives actual target
-});
-
-document.querySelector('.nav').addEventListener('click', function (e) {
-  // this.style.backgroundColor = randomColor();
-  // console.log(e.target); // same target as nav__link and nav__links due to BUBBLING
-  // console.log(e.currentTarget); // gives actual target of this element
-});
-
-// DOM Traversing
-// const h1 = document.querySelector('h1');
-
-// Going downwards: child
-console.log(h1.querySelectorAll('.highlight'));
-console.log(h1.childNodes); // includes comments
-console.log(h1.children);
-h1.firstElementChild.style.color = 'white';
-h1.lastElementChild.style.color = 'orangered';
-
-// Going upwards: parents
-console.log(h1.parentNode);
-console.log(h1.parentElement); // direct parent
-
-// closest parent that has `.header` in class
-// .closest() will find parent no matter how far up the DOM tree
-h1.closest('.header').style.background = 'var(--gradient-secondary)';
-
-h1.closest('h1').style.background = 'var(--gradient-primary)'; // will select itself
-
-// Going sideways: siblings
-console.log(h1.previousElementSibling); // null -> does not have a previous sibling
-console.log(h1.nextElementSibling); // h4
-
-// For nodes
-console.log(h1.previousSibling);
-console.log(h1.nextSibling);
-
-console.log(h1.parentElement.children); // includes itself, an iterable into array
-[...h1.parentElement.children].forEach(el => {
-  if (el !== h1) {
-    // el.style.transform = 'scale(0.5)';
-  }
-});
-
-// Tabbed component
-
-// Bad practice
-// tabs.forEach(t => t.addEventListener('click', () => console.log('TAB')));
 
 // Best practice: events delegation
 tabsContainer.addEventListener('click', function (e) {
@@ -286,12 +111,8 @@ tabsContainer.addEventListener('click', function (e) {
     .classList.add('operations__content--active');
 });
 
-// Passing Arguments to Event Handlers
-
 // Menu fade animation
 const handleHover = function (e) {
-  // console.log(this); // 0.5 or 1
-
   if (e.target.classList.contains('nav__link')) {
     const link = e.target;
     const siblings = link.closest('.nav').querySelectorAll('.nav__link');
@@ -306,39 +127,10 @@ const handleHover = function (e) {
   }
 };
 
-// Use .bind() method instead -- passing "argument" into handler
-// nav.addEventListener('mouseover', e => handleHover(e, 0.5));
-// nav.addEventListener('mouseout', e => handleHover(e, 1));
 nav.addEventListener('mouseover', handleHover.bind(0.5));
 nav.addEventListener('mouseout', handleHover.bind(1));
 
 // Sticky Navigation
-
-// This approach is not optimized for performance
-// const initialCoords = section1.getBoundingClientRect();
-// console.log(initialCoords);
-// window.addEventListener('scroll', function () {
-//   // should AVOID `scroll` event
-//   console.log(window.scrollY);
-//   if (window.scrollY > initialCoords.top) {
-//     nav.classList.add('sticky');
-//   } else {
-//     nav.classList.remove('sticky');
-//   }
-// });
-
-// const obcCallback = (entries, observer) => {
-//   entries.forEach(entry => {
-//     console.log(entry);
-//   });
-// };
-// const obsOptions = {
-//   root: null,
-//   threshold: [0, 0.2],
-// };
-// const observer = new IntersectionObserver(obcCallback, obsOptions);
-// observer.observe(section1);
-
 const stickyNav = entries => {
   const [entry] = entries;
   if (!entry.isIntersecting) {
@@ -349,15 +141,13 @@ const stickyNav = entries => {
 };
 
 const headerObserver = new IntersectionObserver(stickyNav, {
-  // stickyNav callback function gets called at threshold
-  root: null, // must be an ancestor of element being observed
-  threshold: 0, // how much of the element you see before it is triggered
-  rootMargin: `-${nav.getBoundingClientRect().height}px`, // amount applied outside of target element
+  root: null,
+  threshold: 0,
+  rootMargin: `-${nav.getBoundingClientRect().height}px`,
 });
 headerObserver.observe(header);
 
 // Reveal Sections
-// const allSections = document.querySelectorAll('.section');
 const revealSection = (entries, observer) => {
   const [entry] = entries;
 
@@ -368,6 +158,7 @@ const revealSection = (entries, observer) => {
   entry.target.classList.remove('section--hidden');
   observer.unobserve(entry.target);
 };
+
 const sectionObserver = new IntersectionObserver(revealSection, {
   root: null,
   threshold: 0.15,
@@ -378,17 +169,14 @@ allSections.forEach(section => {
 });
 
 // Lazy loading images
-
-// Get all images with data-src and unblur
 const imgTargets = document.querySelectorAll('img[data-src]');
-console.log(imgTargets);
-
 const loadImg = (entries, observer) => {
   const [entry] = entries;
 
   if (!entry.isIntersecting) {
     return;
   }
+
   // Replace src with data-src
   entry.target.src = entry.target.dataset.src;
 
@@ -419,7 +207,6 @@ const slider = () => {
   let currSlide = 0;
   slides.forEach((s, i) => (s.style.transform = `translateX(${100 * i}%)`));
 
-  // Functions
   const createDots = () => {
     // Create a dot element for each of the slides
     slides.forEach((_, i) => {
@@ -479,18 +266,10 @@ const slider = () => {
 
   // Building a Slider Component: Part 2
   document.addEventListener('keydown', function (e) {
-    // if (e.code === 'ArrowLeft') {
-    //   prevSlide();
-    // }
-    // if (e.code === 'ArrowRight') {
-    //   nextSlide();
-    // }
-    // Short-circuiting approach
     e.code === 'ArrowLeft' && prevSlide();
     e.code === 'ArrowRight' && nextSlide();
   });
 
-  // The dots (event delegation)
   dotContainer.addEventListener('click', function (e) {
     if (e.target.classList.contains('dots__dot')) {
       const { slide } = e.target.dataset;
@@ -502,13 +281,10 @@ const slider = () => {
 slider();
 
 // Lifecycle DOM Events
+// document.addEventListener('DOMContentLoaded', function (e) {
+//   console.log('HTML parsed and DOM tree built!', e);
+// });
 
-// Does not wait for images and other external resources to load
-// Execute code AFTER the DOM is available
-document.addEventListener('DOMContentLoaded', function (e) {
-  console.log('HTML parsed and DOM tree built!', e);
-});
-
-window.addEventListener('load', function (e) {
-  console.log('Page fully loaded', e);
-});
+// window.addEventListener('load', function (e) {
+//   console.log('Page fully loaded', e);
+// });
